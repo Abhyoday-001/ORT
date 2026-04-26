@@ -781,7 +781,13 @@ app.post('/api/auth/login', async (req, res) => {
       return res.status(403).json({ error: 'This player is disabled by admin' });
     }
 
-    const ok = await bcrypt.compare(password, team.password_hash);
+    // Backward compatibility: support both hashed and legacy plain-text password storage.
+    let ok = false;
+    if (team.password_hash) {
+      ok = await bcrypt.compare(password, team.password_hash);
+    } else if (team.password) {
+      ok = password === String(team.password);
+    }
     if (!ok) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
