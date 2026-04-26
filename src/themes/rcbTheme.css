@@ -1,0 +1,464 @@
+/* ════════════════════════════════════════════════════════════════════
+   OPERATION RED TROPHY — Dark Terminal Investigative Theme
+   ═══════════════════════════════════════════════════════════════════ */
+
+:root {
+  /* ── Core Palette ── */
+  --ort-bg:        #09090c;
+  --ort-bg-light:  #121217;
+  --ort-bg-card:   rgba(255,255,255,0.04);
+  --ort-border:    rgba(218,24,24,0.28);
+
+  /* ── Accent Colors ── */
+  --ort-green:       #d8ab54;
+  --ort-green-dim:   rgba(216,171,84,0.16);
+  --ort-green-glow:  rgba(216,171,84,0.42);
+
+  --ort-cyan:        #da1818;
+  --ort-cyan-dim:    rgba(218,24,24,0.16);
+  --ort-cyan-glow:   rgba(218,24,24,0.42);
+
+  --ort-amber:       #f0c16b;
+  --ort-amber-dim:   rgba(240,193,107,0.14);
+  --ort-amber-glow:  rgba(240,193,107,0.4);
+
+  --ort-red:         #da1818;
+  --ort-red-dim:     rgba(218,24,24,0.15);
+  --ort-red-glow:    rgba(218,24,24,0.45);
+
+  /* ── Typography ── */
+  --font-heading:  'Orbitron', 'Rajdhani', sans-serif;
+  --font-mono:     'JetBrains Mono', 'Fira Code', ui-monospace, monospace;
+  --font-body:     'Rajdhani', 'Inter', sans-serif;
+
+  /* ── Glass ── */
+  --glass-bg:      rgba(12,12,16,0.84);
+  --glass-blur:    blur(18px);
+}
+
+/* ══════ Glassmorphism Panel ══════ */
+.ort-glass {
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--ort-border);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+.ort-glass:hover {
+  border-color: rgba(218,24,24,0.44);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.6), inset 0 0 34px rgba(218,24,24,0.08);
+}
+
+/* ══════ Neon Borders ══════ */
+.ort-neon-green {
+  border: 1px solid var(--ort-green);
+  box-shadow: 0 0 12px var(--ort-green-glow), inset 0 0 8px var(--ort-green-dim);
+}
+.ort-neon-cyan {
+  border: 1px solid var(--ort-cyan);
+  box-shadow: 0 0 12px var(--ort-cyan-glow), inset 0 0 8px var(--ort-cyan-dim);
+}
+.ort-neon-amber {
+  border: 1px solid var(--ort-amber);
+  box-shadow: 0 0 12px var(--ort-amber-glow), inset 0 0 8px var(--ort-amber-dim);
+}
+.ort-neon-red {
+  border: 1px solid var(--ort-red);
+  box-shadow: 0 0 12px var(--ort-red-glow), inset 0 0 8px var(--ort-red-dim);
+}
+
+/* ══════ Text Glow ══════ */
+.ort-glow-green { text-shadow: 0 0 12px var(--ort-green-glow), 0 0 30px var(--ort-green-dim); }
+.ort-glow-cyan  { text-shadow: 0 0 12px var(--ort-cyan-glow), 0 0 30px var(--ort-cyan-dim); }
+.ort-glow-amber { text-shadow: 0 0 12px var(--ort-amber-glow), 0 0 30px var(--ort-amber-dim); }
+.ort-glow-red   { text-shadow: 0 0 12px var(--ort-red-glow), 0 0 30px var(--ort-red-dim); }
+
+/* ══════ Terminal Buttons ══════ */
+.ort-btn {
+  position: relative;
+  overflow: hidden;
+  padding: 0.65rem 1.5rem;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  border: 1px solid var(--ort-red);
+  background: transparent;
+  color: var(--ort-red);
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+.ort-btn:hover {
+  background: var(--ort-red-dim);
+  box-shadow: 0 0 20px var(--ort-red-glow);
+  transform: translateY(-1px);
+}
+.ort-btn:active {
+  transform: translateY(0);
+}
+.ort-btn.ort-btn-cyan  { border-color: var(--ort-cyan);  color: var(--ort-cyan); }
+.ort-btn.ort-btn-cyan:hover  { background: var(--ort-cyan-dim); box-shadow: 0 0 20px var(--ort-cyan-glow); }
+.ort-btn.ort-btn-amber { border-color: var(--ort-amber); color: var(--ort-amber); }
+.ort-btn.ort-btn-amber:hover { background: var(--ort-amber-dim); box-shadow: 0 0 20px var(--ort-amber-glow); }
+.ort-btn.ort-btn-red   { border-color: var(--ort-red);   color: var(--ort-red); }
+.ort-btn.ort-btn-red:hover   { background: var(--ort-red-dim); box-shadow: 0 0 20px var(--ort-red-glow); }
+.ort-btn.ort-btn-solid-green {
+  background: var(--ort-green);
+  color: var(--ort-bg);
+  border-color: var(--ort-green);
+}
+.ort-btn.ort-btn-solid-green:hover {
+  box-shadow: 0 0 30px var(--ort-green-glow);
+}
+.ort-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ══════ Terminal Inputs ══════ */
+.ort-input {
+  background: rgba(0,0,0,0.6);
+  border: 1px solid rgba(218,24,24,0.28);
+  padding: 0.65rem 1rem;
+  color: #f5f5f7;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  outline: none;
+  transition: all 0.3s ease;
+  width: 100%;
+}
+.ort-input::placeholder {
+  color: rgba(245,245,247,0.28);
+  font-style: italic;
+}
+.ort-input:focus {
+  border-color: var(--ort-red);
+  box-shadow: 0 0 12px var(--ort-red-glow);
+}
+.ort-input.ort-input-amber {
+  color: var(--ort-amber);
+  border-color: rgba(255,184,0,0.2);
+}
+.ort-input.ort-input-amber::placeholder { color: rgba(255,184,0,0.25); }
+.ort-input.ort-input-amber:focus {
+  border-color: var(--ort-amber);
+  box-shadow: 0 0 12px var(--ort-amber-glow);
+}
+
+/* ══════ Panel Heading ══════ */
+.ort-panel-heading {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+  padding-left: 0.75rem;
+  border-left: 3px solid var(--ort-red);
+  color: var(--ort-red);
+}
+.ort-panel-heading.amber { border-color: var(--ort-amber); color: var(--ort-amber); }
+.ort-panel-heading.cyan  { border-color: var(--ort-cyan);  color: var(--ort-cyan);  }
+.ort-panel-heading.red   { border-color: var(--ort-red);   color: var(--ort-red);   }
+
+/* ══════ Scanline Overlay ══════ */
+.ort-scanline {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: linear-gradient(to bottom, transparent, rgba(218,24,24,0.13), transparent);
+  z-index: 10;
+  pointer-events: none;
+  animation: ortScanline 4s linear infinite;
+}
+@keyframes ortScanline {
+  0%   { transform: translateY(-100%); }
+  100% { transform: translateY(2000%); }
+}
+
+/* ══════ Cursor Blink ══════ */
+.ort-cursor {
+  display: inline-block;
+  width: 8px;
+  height: 1.1em;
+  background: var(--ort-amber);
+  margin-left: 2px;
+  animation: ortBlink 1s step-end infinite;
+  vertical-align: text-bottom;
+}
+@keyframes ortBlink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+/* ══════ Glitch Text ══════ */
+.ort-glitch {
+  animation: ortGlitch 3s linear infinite;
+}
+@keyframes ortGlitch {
+  0%, 90%, 95.1%, 98.1%, 100% { opacity: 1; transform: none; }
+  90.5% { opacity: 0.8; transform: translate(2px, -1px) skew(0.5deg); }
+  95% { opacity: 0.7; transform: translate(-2px, 1px) skew(-0.3deg); }
+  98% { opacity: 0.9; transform: translate(1px, 0) skew(0.2deg); }
+}
+
+/* ══════ Animations ══════ */
+.ort-fade-in {
+  animation: ortFadeIn 0.5s ease-out forwards;
+}
+@keyframes ortFadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.ort-pulse-glow {
+  animation: ortPulse 2.5s ease-in-out infinite;
+}
+@keyframes ortPulse {
+  0%, 100% { box-shadow: 0 0 8px var(--ort-green-dim); }
+  50%      { box-shadow: 0 0 20px var(--ort-green-glow), 0 0 40px var(--ort-green-dim); }
+}
+
+.ort-pulse-btn {
+  animation: ortPulseBtn 1.5s ease-in-out infinite;
+}
+@keyframes ortPulseBtn {
+  0%, 100% { box-shadow: 0 0 5px var(--ort-green-dim); }
+  50%      { box-shadow: 0 0 15px var(--ort-green-glow); }
+}
+
+.ort-typing {
+  overflow: hidden;
+  white-space: nowrap;
+  border-right: 2px solid var(--ort-green);
+  animation: ortTyping 2s steps(30, end), ortBlink 1s step-end infinite;
+  width: 0;
+  animation-fill-mode: forwards;
+}
+@keyframes ortTyping {
+  from { width: 0; }
+  to   { width: 100%; }
+}
+
+/* ══════ Transition Overlay ══════ */
+.ort-transition-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: var(--ort-bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+.ort-transition-text {
+  font-family: var(--font-heading);
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--ort-amber);
+  text-transform: uppercase;
+  letter-spacing: 0.3em;
+  margin-bottom: 1.5rem;
+}
+.ort-transition-bar {
+  width: 320px;
+  height: 3px;
+  background: rgba(240,193,107,0.16);
+  overflow: hidden;
+}
+.ort-transition-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--ort-red), var(--ort-amber));
+  box-shadow: 0 0 12px var(--ort-red-glow);
+  animation: ortProgressFill 2.2s ease-in-out forwards;
+}
+@keyframes ortProgressFill {
+  from { width: 0; }
+  to   { width: 100%; }
+}
+
+/* ══════ Blur Background (for modals) ══════ */
+.ort-blur-bg {
+  filter: blur(12px) brightness(0.4);
+  transition: filter 0.4s ease-out;
+  pointer-events: none;
+}
+
+/* ══════ Flicker ══════ */
+.ort-flicker {
+  animation: ortFlicker 3s infinite;
+}
+@keyframes ortFlicker {
+  0%, 19.999%, 22%, 62.999%, 64%, 64.999%, 70%, 100% { opacity: 0.99; }
+  20%, 21.999%, 63%, 63.999%, 65%, 69.999% { opacity: 0.4; }
+}
+
+/* ══════ Signal Strength Bars (WiFi) ══════ */
+.wifi-bar {
+  display: inline-block;
+  width: 3px;
+  background: var(--ort-green);
+  margin-right: 2px;
+  border-radius: 1px;
+  opacity: 0.3;
+}
+.wifi-bar.active { opacity: 1; }
+
+/* ══════ Vault Dial Animation ══════ */
+.vault-dial {
+  animation: ortDialSpin 8s linear infinite;
+}
+@keyframes ortDialSpin {
+  0%   { transform: rotate(0deg); }
+  25%  { transform: rotate(120deg); }
+  50%  { transform: rotate(60deg); }
+  75%  { transform: rotate(300deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* ══════ Vault Open ══════ */
+.vault-opening {
+  animation: ortVaultOpen 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes ortVaultOpen {
+  0%   { transform: scale(1); opacity: 1; }
+  50%  { transform: scale(1.05); opacity: 0.8; }
+  100% { transform: scale(0) rotate(15deg); opacity: 0; }
+}
+
+/* ══════ Particle Burst ══════ */
+.ort-burst {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--ort-green);
+  animation: ortBurst 1.5s ease-out forwards;
+}
+@keyframes ortBurst {
+  0%   { transform: translate(0,0) scale(1); opacity: 1; }
+  100% { transform: translate(var(--bx, 100px), var(--by, -80px)) scale(0); opacity: 0; }
+}
+
+/* ══════ Tab styling ══════ */
+.ort-tab {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  padding: 0.5rem 1.2rem;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: transparent;
+  color: rgba(255,255,255,0.35);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+}
+.ort-tab:hover {
+  color: rgba(255,255,255,0.6);
+  border-color: rgba(255,255,255,0.15);
+}
+.ort-tab.active {
+  color: var(--ort-amber);
+  border-color: var(--ort-red);
+  background: var(--ort-red-dim);
+  box-shadow: 0 0 8px var(--ort-red-glow);
+}
+
+/* ══════ Leaflet Map Overrides ══════ */
+.leaflet-container {
+  background: var(--ort-bg) !important;
+  font-family: var(--font-mono) !important;
+}
+.leaflet-control-attribution {
+  display: none !important;
+}
+
+/* ══════ Badge ══════ */
+.ort-badge {
+  display: inline-block;
+  padding: 0.15rem 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border: 1px solid;
+  line-height: 1;
+}
+.ort-badge-red {
+  color: var(--ort-red);
+  border-color: var(--ort-red);
+  background: var(--ort-red-dim);
+}
+.ort-badge-green {
+  color: var(--ort-green);
+  border-color: var(--ort-green);
+  background: var(--ort-green-dim);
+}
+.ort-badge-amber {
+  color: var(--ort-amber);
+  border-color: var(--ort-amber);
+  background: var(--ort-amber-dim);
+}
+
+/* ══════ Scrollbar ══════ */
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-track {
+  background: var(--ort-bg);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(218,24,24,0.28);
+  border-radius: 2px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(240,193,107,0.5);
+}
+
+/* ══════ Base Reset ══════ */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body, #root {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+body {
+  background: var(--ort-bg);
+  color: rgba(255,255,255,0.8);
+  font-family: var(--font-body);
+}
+
+/* ══════ Dot-Matrix Grid Background ══════ */
+.ort-grid-bg {
+  position: relative;
+}
+.ort-grid-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(240,193,107,0.08) 1px, transparent 1px);
+  background-size: 24px 24px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.login-shell {
+  position: relative;
+  z-index: 4;
+  box-shadow:
+    0 0 0 1px rgba(218,24,24,0.14),
+    0 16px 68px rgba(0,0,0,0.68),
+    0 0 48px rgba(218,24,24,0.18);
+}

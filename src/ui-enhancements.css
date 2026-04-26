@@ -1,0 +1,1039 @@
+/* ═══════════════════════════════════════════════════════════════════════
+   UI ENHANCEMENTS v2.0 — Kill Switch Simulation
+   Premium cybersecurity SOC-dashboard layer.
+   Additive only — does NOT override component logic / props / state.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* ─── Fonts ───────────────────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Orbitron:wght@500;600;700;800;900&display=swap');
+
+/* ═══════════════════════════════════════════════════════════════════════
+   § 0  DESIGN TOKENS
+   ═══════════════════════════════════════════════════════════════════════ */
+:root {
+  /* Typography */
+  --font-display: 'Orbitron', 'JetBrains Mono', monospace;
+  --font-ui:      'Inter', system-ui, sans-serif;
+  --font-mono:    'JetBrains Mono', 'Fira Code', ui-monospace, monospace;
+
+  /* Core palette */
+  --cyan-400:     #22d3ee;
+  --cyan-500:     #06b6d4;
+  --cyan-600:     #0891b2;
+  --emerald-400:  #34d399;
+  --rose-400:     #fb7185;
+  --amber-400:    #fbbf24;
+  --slate-900:    #0f172a;
+  --slate-950:    #020617;
+
+  /* Glow presets */
+  --cyan-glow:       0 0 14px rgba(6,182,212,.35), 0 0 40px rgba(6,182,212,.08);
+  --cyan-glow-lg:    0 0 26px rgba(6,182,212,.5),  0 0 60px rgba(6,182,212,.12), 0 0 100px rgba(6,182,212,.04);
+  --cyan-glow-text:  0 0 18px rgba(6,182,212,.4),  0 0 50px rgba(6,182,212,.1);
+  --emerald-glow:    0 0 14px rgba(16,185,129,.35), 0 0 40px rgba(16,185,129,.08);
+  --rose-glow:       0 0 14px rgba(244,63,94,.35),  0 0 40px rgba(244,63,94,.08);
+  --amber-glow:      0 0 14px rgba(251,191,36,.3),  0 0 40px rgba(251,191,36,.06);
+
+  /* Panel system */
+  --panel-bg:         rgba(15,23,42,.35);
+  --panel-bg-hover:   rgba(15,23,42,.78);
+  --panel-border:     rgba(100,116,139,.15);
+  --panel-border-hi:  rgba(6,182,212,.28);
+  --panel-shadow:     0 8px 32px rgba(0,0,0,.45), 0 0 0 1px rgba(100,116,139,.08);
+  --panel-radius:     0.85rem;
+
+  /* Glassmorphism */
+  --glass-blur:       blur(18px) saturate(1.5);
+
+  /* Timing */
+  --ease-out-expo:    cubic-bezier(.16,1,.3,1);
+  --ease-spring:      cubic-bezier(.34,1.56,.64,1);
+  --dur-fast:         150ms;
+  --dur-normal:       280ms;
+  --dur-slow:         420ms;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════
+   § 1  GLASSMORPHISM PANEL SYSTEM
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* All rounded bordered panel containers in both views */
+.rounded-xl[class*="border-slate-800"],
+.rounded-xl[class*="border-slate-700"],
+.rounded-lg[class*="border-slate-700"] {
+  background: var(--panel-bg) !important;
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border-color: var(--panel-border) !important;
+  box-shadow: var(--panel-shadow);
+  transition:
+    border-color var(--dur-normal) var(--ease-out-expo),
+    box-shadow  var(--dur-normal) var(--ease-out-expo),
+    background  var(--dur-normal) var(--ease-out-expo);
+}
+
+/* Hover lift on side-panel cards */
+aside > div.rounded-xl {
+  transition:
+    border-color var(--dur-normal) var(--ease-out-expo),
+    box-shadow   var(--dur-normal) var(--ease-out-expo),
+    transform    var(--dur-normal) var(--ease-out-expo);
+}
+
+aside > div.rounded-xl:hover {
+  border-color: var(--panel-border-hi) !important;
+  box-shadow:
+    var(--panel-shadow),
+    0 0 28px rgba(6,182,212,.06);
+  transform: translateY(-1px);
+}
+
+/* Gradient inner-top shine on panels */
+.rounded-xl[class*="border-slate-800"]::before,
+.rounded-xl[class*="border-slate-700"]::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    rgba(255,255,255,.02) 0%,
+    transparent 40%
+  );
+  z-index: 0;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════
+   § 2  TYPOGRAPHY & HIERARCHY
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* Section headings — "Current Station", "Activity Log", etc. */
+.tracking-\[0\.2em\] {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: 0.28em;
+  color: rgba(148,163,184,.6);
+  text-transform: uppercase;
+}
+
+/* Main header title — h1 with cyan */
+h1[class*="text-cyan-400"] {
+  font-family: var(--font-display);
+  text-shadow: var(--cyan-glow-text);
+}
+
+/* Station name in side panel */
+p[class*="text-cyan-400"][class*="font-semibold"] {
+  text-shadow: 0 0 12px rgba(6,182,212,.25);
+  font-family: var(--font-ui);
+}
+
+/* Monospace elements */
+.font-mono, [class*="font-mono"] {
+  font-family: var(--font-mono);
+}
+
+/* Improve sub-pixel rendering on small text */
+.text-\[10px\],
+.text-\[11px\],
+.text-\[9px\],
+.text-\[8px\],
+.text-xs {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════
+   § 3  VIEW TOGGLE PILL — Premium Animated
+   ═══════════════════════════════════════════════════════════════════════ */
+
+div[class*="fixed top-4 right-4"][role="switch"] {
+  font-family: var(--font-display);
+  background: linear-gradient(145deg, rgba(2,6,23,.95), rgba(15,23,42,.85)) !important;
+  backdrop-filter: blur(24px) saturate(1.4);
+  -webkit-backdrop-filter: blur(24px) saturate(1.4);
+  box-shadow:
+    0 0 0 1px rgba(6,182,212,.06),
+    0 4px 24px rgba(0,0,0,.55),
+    inset 0 1px 0 rgba(255,255,255,.04);
+  transition: all 0.35s var(--ease-out-expo);
+}
+
+div[class*="fixed top-4 right-4"][role="switch"]:hover {
+  box-shadow:
+    var(--cyan-glow),
+    0 4px 24px rgba(0,0,0,.5),
+    inset 0 1px 0 rgba(255,255,255,.06);
+}
+
+/* The sliding pill indicator */
+div[class*="fixed top-4 right-4"][role="switch"] > span:last-child {
+  transition: left 0.4s var(--ease-spring), width 0.4s var(--ease-spring);
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════
+   § 4  SIDE NAVIGATION BAR — Hover Glow
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* The vertical nav pill container */
+div[class*="absolute right-3"][class*="flex-col"][class*="rounded-2xl"] {
+  background: linear-gradient(180deg, rgba(15,23,42,.88), rgba(15,23,42,.75)) !important;
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border-color: rgba(100,116,139,.18) !important;
+  box-shadow: 0 8px 40px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.03);
+}
+
+/* Individual nav buttons */
+button[class*="rounded-xl"][class*="w-10"][class*="h-10"] {
+  transition: all var(--dur-normal) var(--ease-spring);
+  position: relative;
+}
+
+button[class*="rounded-xl"][class*="w-10"][class*="h-10"]::after {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: inherit;
+  opacity: 0;
+  transition: opacity var(--dur-normal) ease;
+  pointer-events: none;
+  background: radial-gradient(circle, rgba(6,182,212,.2), transparent 70%);
+}
+
+button[class*="rounded-xl"][class*="w-10"][class*="h-10"]:hover {
+  transform: scale(1.14);
+  z-index: 2;
+}
+
+button[class*="rounded-xl"][class*="w-10"][class*="h-10"]:hover::after {
+  opacity: 1;
+}
+
+button[class*="rounded-xl"][class*="w-10"][class*="h-10"]:active {
+  transform: scale(.92);
+  transition-duration: 80ms;
+}
+
+/* Active ring upgrade */
+button[class*="rounded-xl"][class*="w-10"][class*="ring-2"] {
+  box-shadow: 0 0 16px rgba(6,182,212,.25);
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════
+   § 5  INTERACT BUTTON — Neon Shimmer
+   ═══════════════════════════════════════════════════════════════════════ */
+
+button[class*="from-cyan-700"] {
+  position: relative;
+  overflow: hidden;
+  font-family: var(--font-display);
+  text-shadow: 0 0 8px rgba(6,182,212,.3);
+  transition: all var(--dur-normal) var(--ease-out-expo);
+}
+
+/* Shimmer sweep */
+button[class*="from-cyan-700"]::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -120%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    105deg,
+    transparent 20%,
+    rgba(255,255,255,.08) 40%,
+    rgba(255,255,255,.14) 50%,
+    rgba(255,255,255,.08) 60%,
+    transparent 80%
+  );
+  transition: left .65s var(--ease-out-expo);
+  pointer-events: none;
+}
+
+button[class*="from-cyan-700"]:hover::after {
+  left: 130%;
+}
+
+button[class*="from-cyan-700"]:hover {
+  box-shadow:
+    0 0 24px rgba(6,182,212,.35),
+    0 0 60px rgba(6,182,212,.08),
+    inset 0 1px 0 rgba(255,255,255,.1);
+  transform: translateY(-1px);
+}
+
+button[class*="from-cyan-700"]:active {
+  transform: scale(.97) translateY(0);
+  transition-duration: 80ms;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════
+   § 6  MINIMAP — Grid + Vignette
+   ═══════════════════════════════════════════════════════════════════════ */
+
+div[class*="w-40 h-40"][class*="bg-slate-900"] {
+  background:
+    linear-gradient(rgba(15,23,42,.88), rgba(15,23,42,.78)),
+    repeating-linear-gradient(0deg,   transparent, transparent 9px, rgba(6,182,212,.06) 9px, rgba(6,182,212,.06) 10px),
+    repeating-linear-gradient(90deg,  transparent, transparent 9px, rgba(6,182,212,.06) 9px, rgba(6,182,212,.06) 10px) !important;
+  border-color: rgba(6,182,212,.18) !important;
+  box-shadow:
+    0 0 24px rgba(0,0,0,.5),
+    inset 0 0 40px rgba(6,182,212,.03);
+}
+
+/* Minimap vignette overlay */
+div[class*="w-40 h-40"][class*="bg-slate-900"]::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,.35) 100%);
+  z-index: 1;
+}
+
+/* Minimap label */
+div[class*="w-40 h-40"] > p[class*="font-mono"] {
+  font-family: var(--font-display);
+  letter-spacing: .28em;
+  position: relative;
+  z-index: 2;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════
+   § 7  CONTROLS HINT BAR
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* Bottom-left controls hint (both 2D + 3D) */
+div[class*="bottom-"][class*="left-"][class*="bg-slate-900"][class*="font-mono"] {
+  background: linear-gradient(135deg, rgba(15,23,42,.75), rgba(15,23,42,.6)) !important;
+  backdrop-filter: blur(14px) saturate(1.3);
+  -webkit-backdrop-filter: blur(14px) saturate(1.3);
+  border-color: rgba(100,116,139,.12) !important;
+  box-shadow: 0 4px 20px rgba(0,0,0,.4);
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════
+   § 8  NOTIFICATION TOAST — Slide-in
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* Override bounce with smooth slide-in */
+div[class*="bg-emerald-900/80"][class*="animate-bounce"] {
+  animation: toast-slide-in .5s var(--ease-spring) !important;
+}
+
+@keyframes toast-slide-in {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -18px) scale(.92);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+  }
+}
+
+/* Toast glass */
+div[class*="bg-emerald-900/80"] {
+  backdrop-filter: blur(14px) saturate(1.3);
+  -webkit-backdrop-filter: blur(14px) saturate(1.3);
+  box-shadow: var(--emerald-glow), 0 8px 32px rgba(0,0,0,.4);
+}
+
+/* Tooltip overlay glass */
+div[class*="bg-slate-900/80"][class*="border-cyan-500"] {
+  backdrop-filter: blur(14px) saturate(1.3);
+  -webkit-backdrop-filter: blur(14px) saturate(1.3);
+  box-shadow: var(--cyan-glow), 0 4px 20px rgba(0,0,0,.4);
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════
+   § 9  ROOM STATE BADGES — Glow Dots
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* Solved badge */
+div[class*="text-emerald-400"][class*="border-emerald-900"] {
+  box-shadow: inset 0 0 12px rgba(16,185,129,.06);
+}
+
+/* Locked badge pulse */
+div[class*="text-red-400"][class*="border-red-950"] {
+  box-shadow: inset 0 0 12px rgba(239,68,68,.06);
+}
+
+div[class*="text-red-400"] .animate-pulse {
+  animation-duration: 1.2s;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════
+   § 10  SCANLINE + FLOOR GRID REFINEMENTS
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.scanline-overlay::after {
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 3px,
+    rgba(6,182,212,.006) 3px,
+    rgba(6,182,212,.006) 6px
+  ) !important;
+  mix-blend-mode: screen;
+}
+
+.floor-grid {
+  background-image:
+    linear-gradient(rgba(6,182,212,.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(6,182,212,.025) 1px, transparent 1px) !important;
+  background-size: 38px 38px !important;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════
+   § 11  MAP CONTAINER VIGNETTE
+   ═══════════════════════════════════════════════════════════════════════ */
+
+div[class*="scanline-overlay"] {
+  position: relative;
+}
+
+div[class*="scanline-overlay"]::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  border-radius: inherit;
+  background: linear-gradient(
+    180deg,
+    rgba(6,182,212,.035) 0%,
+    transparent 12%,
+    transparent 88%,
+    rgba(0,0,0,.18) 100%
+  );
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════
+   § 12  MULTIPLAYER STATUS
+   ═══════════════════════════════════════════════════════════════════════ */
+
+div[class*="fixed top-4 right-44"],
+div[class*="fixed top-4"][class*="right-4"][class*="z-50"] {
+  background: linear-gradient(145deg, rgba(15,23,42,.82), rgba(30,41,59,.62)) !important;
+  backdrop-filter: blur(20px) saturate(1.3);
+  -webkit-backdrop-filter: blur(20px) saturate(1.3);
+  border-color: var(--panel-border) !important;
+  box-shadow: 0 4px 20px rgba(0,0,0,.4);
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════
+   § 13  ACTIVITY LOG
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* Tabular timestamps */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+  font-size: 10px;
+  opacity: .45;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════
+   § 14  AGENT CHARACTER — Glow Ring Boost
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* The absolute-positioned agent wrapper in 2D view */
+div[class*="border-cyan-400"][class*="shadow-"][class*="rounded-full"] {
+  box-shadow:
+    0 0 22px rgba(6,182,212,.55),
+    0 0 50px rgba(6,182,212,.12) !important;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════
+   § 15  3D CANVAS OVERLAY HUD
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* Inventory HUD glass */
+div[class*="bottom-4 right-4"][class*="min-w-"] {
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+}
+
+/* Inventory keyboard badges — uniform appearance */
+div[class*="bottom-4 right-4"] span[class*="bg-slate-800"][class*="border-slate-700"] {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  letter-spacing: .04em;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════
+   § 16  AMBIENT ANIMATED BACKGROUND — Subtle
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* Full-page very subtle gradient animation behind everything */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(ellipse 60% 50% at 20% 30%, rgba(6,182,212,.04) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 40% at 80% 70%, rgba(16,185,129,.03) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 60% at 60% 20%, rgba(244,63,94,.02) 0%, transparent 60%);
+  animation: ambient-shift 20s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+@keyframes ambient-shift {
+  0%   { opacity: 1; }
+  50%  { opacity: .6; }
+  100% { opacity: 1; }
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════
+   § 17  ACCESSIBILITY
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* Focus-visible ring — all interactive elements */
+button:focus-visible,
+input:focus-visible,
+a:focus-visible,
+[tabindex="0"]:focus-visible {
+  outline: 2px solid rgba(6,182,212,.7);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 5px rgba(6,182,212,.12);
+}
+
+/* Prefers reduced motion — disable animations */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Prefers contrast — crisper borders */
+@media (prefers-contrast: high) {
+  :root {
+    --panel-border: rgba(100,116,139,.4);
+    --panel-border-hi: rgba(6,182,212,.5);
+  }
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════
+   § 18  RESPONSIVE BREAKPOINTS
+   ═══════════════════════════════════════════════════════════════════════ */
+
+@media (max-width: 1023px) {
+  /* Stack layout on tablet */
+  .max-w-5xl.flex.flex-col.lg\:flex-row {
+    flex-direction: column !important;
+  }
+
+  /* Scale side nav */
+  div[class*="absolute right-3"][class*="flex-col"] {
+    transform: scale(.82) translateY(-50%);
+    transform-origin: right center;
+    right: 2px;
+  }
+}
+
+@media (max-width: 639px) {
+  /* Compact header */
+  h1[class*="text-xl"] {
+    font-size: .88rem !important;
+  }
+
+  /* Full width side panel */
+  aside[class*="lg:w-72"] {
+    width: 100% !important;
+  }
+
+  /* Hide minimap on small screens */
+  div[class*="w-40 h-40"][class*="bg-slate-900"] {
+    display: none;
+  }
+
+  /* Compact controls */
+  div[class*="bottom-"][class*="left-"][class*="font-mono"] {
+    left: 4px;
+    bottom: 4px;
+    padding: 4px 8px;
+  }
+
+  /* Smaller toggle pill */
+  div[class*="fixed top-4 right-4"][role="switch"] {
+    transform: scale(0.85);
+    transform-origin: top right;
+  }
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════
+   § 19  CUSTOM SCROLLBAR
+   ═══════════════════════════════════════════════════════════════════════ */
+
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(6,182,212,.18);
+  border-radius: 6px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(6,182,212,.35);
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(6,182,212,.18) transparent;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════
+   § 20  SELECTION COLOR
+   ═══════════════════════════════════════════════════════════════════════ */
+
+::selection {
+  background: rgba(6,182,212,.28);
+  color: #e2e8f0;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════
+   § 21  FOOTER
+   ═══════════════════════════════════════════════════════════════════════ */
+
+footer {
+  font-family: var(--font-mono);
+  letter-spacing: .12em;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════
+   § 22  UTILITY KEYFRAMES (shared)
+   ═══════════════════════════════════════════════════════════════════════ */
+
+@keyframes fade-in-up {
+  0%   { opacity: 0; transform: translateY(8px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 8px rgba(6,182,212,.15); }
+  50%      { box-shadow: 0 0 18px rgba(6,182,212,.35); }
+}
+
+@keyframes neon-flicker {
+  0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+    text-shadow: var(--cyan-glow-text);
+    opacity: 1;
+  }
+  20%, 24%, 55% {
+    text-shadow: none;
+    opacity: .85;
+  }
+}
+
+@keyframes border-breathe {
+  0%, 100% { border-color: rgba(6,182,212,.15); }
+  50%      { border-color: rgba(6,182,212,.3); }
+}
+
+/* Apply breathing border to the map container */
+div[class*="relative"][class*="overflow-hidden"][class*="scanline-overlay"] {
+  animation: border-breathe 6s ease-in-out infinite;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════
+   § 23  AMBIENT GLOW ELEMENT (injected by JS)
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.ambient-glow {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 1.5s ease;
+}
+
+.ambient-glow.active {
+  opacity: 1;
+}
+
+.ambient-glow__orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  mix-blend-mode: screen;
+  will-change: transform, opacity;
+}
+
+.ambient-glow__orb--cyan {
+  width: 400px;
+  height: 400px;
+  background: rgba(6,182,212,.06);
+  top: 15%;
+  left: 10%;
+  animation: orb-float-1 18s ease-in-out infinite alternate;
+}
+
+.ambient-glow__orb--emerald {
+  width: 350px;
+  height: 350px;
+  background: rgba(16,185,129,.04);
+  bottom: 20%;
+  right: 15%;
+  animation: orb-float-2 22s ease-in-out infinite alternate;
+}
+
+.ambient-glow__orb--rose {
+  width: 300px;
+  height: 300px;
+  background: rgba(244,63,94,.025);
+  top: 60%;
+  left: 50%;
+  animation: orb-float-3 25s ease-in-out infinite alternate;
+}
+
+@keyframes orb-float-1 {
+  0%   { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(60px, -40px) scale(1.15); }
+}
+
+@keyframes orb-float-2 {
+  0%   { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(-50px, 30px) scale(1.1); }
+}
+
+@keyframes orb-float-3 {
+  0%   { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(40px, -50px) scale(1.08); }
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════
+   § 24  KEYBOARD TOOLTIP (injected by JS)
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.kb-tooltip {
+  position: fixed;
+  bottom: 48px;
+  left: 50%;
+  transform: translateX(-50%) translateY(12px);
+  padding: 10px 22px;
+  border-radius: 10px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: .06em;
+  color: var(--cyan-400);
+  background: linear-gradient(145deg, rgba(15,23,42,.92), rgba(30,41,59,.78));
+  backdrop-filter: blur(18px) saturate(1.3);
+  -webkit-backdrop-filter: blur(18px) saturate(1.3);
+  border: 1px solid rgba(6,182,212,.2);
+  box-shadow: var(--cyan-glow), 0 8px 32px rgba(0,0,0,.5);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 9999;
+  transition:
+    opacity .4s var(--ease-out-expo),
+    transform .4s var(--ease-spring);
+  white-space: nowrap;
+}
+
+.kb-tooltip.visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.kb-tooltip kbd {
+  display: inline-block;
+  padding: 2px 7px;
+  margin: 0 3px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  background: rgba(6,182,212,.12);
+  border: 1px solid rgba(6,182,212,.25);
+  color: #22d3ee;
+  line-height: 1.4;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════
+   § 25  VIEW TRANSITION FLASH (injected by JS)
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.view-transition-flash {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, rgba(6,182,212,.15), transparent 70%);
+  opacity: 0;
+}
+
+.view-transition-flash.active {
+  animation: vt-flash .45s var(--ease-out-expo) forwards;
+}
+
+@keyframes vt-flash {
+  0%   { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════
+   § 26  CURSOR RING (injected by JS — only in 2D view)
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.cursor-ring {
+  position: fixed;
+  width: 28px;
+  height: 28px;
+  border: 1.5px solid rgba(6,182,212,.3);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 99998;
+  transform: translate(-50%, -50%);
+  transition: width .2s ease, height .2s ease, border-color .2s ease;
+  will-change: left, top;
+  mix-blend-mode: screen;
+}
+
+.cursor-ring.hovering {
+  width: 40px;
+  height: 40px;
+  border-color: rgba(6,182,212,.55);
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════
+   § 27  SOC HEADER — Premium Command Center Bar
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.soc-header {
+  position: relative;
+  padding-bottom: 12px;
+}
+
+/* Gradient accent line beneath header */
+.soc-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(6,182,212,.4) 20%,
+    rgba(6,182,212,.15) 50%,
+    rgba(16,185,129,.3) 80%,
+    transparent 100%
+  );
+}
+
+/* Subtle glow on header bottom border */
+.soc-header::before {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 10%;
+  right: 10%;
+  height: 8px;
+  background: radial-gradient(ellipse at center, rgba(6,182,212,.06), transparent 70%);
+  pointer-events: none;
+}
+
+/* Threat badge tiny glow */
+.soc-threat-badge {
+  border-color: rgba(239,68,68,.12) !important;
+  position: relative;
+}
+
+.soc-threat-badge::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: linear-gradient(135deg, rgba(239,68,68,.04), transparent 60%);
+  pointer-events: none;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════
+   § 28  SOC FOOTER — Subtle Top Edge Glow
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.soc-footer {
+  position: relative;
+  padding-top: 12px;
+}
+
+.soc-footer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(100,116,139,.15) 30%,
+    rgba(100,116,139,.08) 50%,
+    rgba(100,116,139,.15) 70%,
+    transparent 100%
+  );
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════
+   § 29  SOC MINIMAP — Enhanced Tactical Overlay
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.soc-minimap {
+  border-color: rgba(6,182,212,.12) !important;
+}
+
+/* Crosshair center lines */
+.soc-minimap::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  border-radius: inherit;
+  background:
+    linear-gradient(0deg,   transparent 49.5%, rgba(6,182,212,.06) 49.5%, rgba(6,182,212,.06) 50.5%, transparent 50.5%),
+    linear-gradient(90deg,  transparent 49.5%, rgba(6,182,212,.06) 49.5%, rgba(6,182,212,.06) 50.5%, transparent 50.5%);
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════
+   § 30  SOC HUD PANEL — Edge Accent Line
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.soc-hud-panel {
+  position: relative;
+}
+
+/* Top edge accent — cyan gradient line */
+.soc-hud-panel::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 8px;
+  right: 8px;
+  height: 1px;
+  border-radius: 1px;
+  background: linear-gradient(90deg, transparent, rgba(6,182,212,.4), transparent);
+  z-index: 1;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════
+   § 31  SOC LOG SCROLL — Fade Mask
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.soc-log-scroll {
+  mask-image: linear-gradient(180deg, #000 70%, transparent 100%);
+  -webkit-mask-image: linear-gradient(180deg, #000 70%, transparent 100%);
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════
+   § 32  SOC GLASS PANEL — Subtle Top-Left Highlight
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* Corner highlights on glass-panel-hover on hover */
+.glass-panel-hover:hover {
+  position: relative;
+}
+
+.glass-panel-hover:hover::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 40px;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(6,182,212,.4), transparent);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.glass-panel-hover:hover::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 40px;
+  background: linear-gradient(180deg, rgba(6,182,212,.4), transparent);
+  pointer-events: none;
+  z-index: 1;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════
+   § 33  SOC DATA STREAM — Decorative Vertical Line
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* Animated data-stream line on the map's left edge */
+div[class*="scanline-overlay"]::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 100%;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(6,182,212,.15) 20%,
+    rgba(6,182,212,.3) 50%,
+    rgba(6,182,212,.15) 80%,
+    transparent 100%
+  );
+  z-index: 2;
+  pointer-events: none;
+  animation: data-stream 4s linear infinite;
+}
+
+@keyframes data-stream {
+  0%   { opacity: .3; }
+  50%  { opacity: .8; }
+  100% { opacity: .3; }
+}
