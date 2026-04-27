@@ -64,6 +64,13 @@ function getCooldownLeft(teamId) {
 
 async function getTeamCooldownLeft(teamId) {
   try {
+    // Check if team currently has the "No Cooldown" buff active
+    const [effects] = await pool.execute(
+      "SELECT id FROM active_effects WHERE team_id = ? AND effect_type = 'no_cooldown' AND (expiry_time IS NULL OR expiry_time > UTC_TIMESTAMP()) LIMIT 1",
+      [teamId]
+    );
+    if (effects?.length > 0) return 0; // Bypass is active, show 0 cooldown
+
     const memLeft = getCooldownLeft(teamId);
     if (memLeft > 0) return memLeft;
     const [rows] = await pool.execute('SELECT cooldown_until FROM teams WHERE id = ? LIMIT 1', [teamId]);
@@ -1180,6 +1187,11 @@ app.post('/api/admin/team/no-cooldown', authRequired, adminRequired, async (req,
       "INSERT INTO active_effects (id, team_id, effect_type, expiry_time, created_at) VALUES (?, ?, 'no_cooldown', DATE_ADD(UTC_TIMESTAMP(), INTERVAL ? SECOND), UTC_TIMESTAMP())",
       [uuid(), teamId, seconds]
     );
+
+    // Clear existing penalty immediately (Memory + Database)
+    wrongAnswerCooldowns.delete(teamId);
+    await pool.execute('UPDATE teams SET cooldown_until = NULL WHERE id = ?', [teamId]);
+    broadcastCooldownUpdate(teamId, 0);
 
     await logAuctionEvent('admin_buff', `Admin granted NO_COOLDOWN to ${teamId} for ${seconds}s`, { team_id: teamId, seconds });
     return res.json({ success: true, message: `No-cooldown granted for ${seconds}s` });
