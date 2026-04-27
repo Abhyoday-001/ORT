@@ -10,9 +10,9 @@ export default function Leaderboard() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const loadLeaderboard = async () => {
+    const loadLeaderboard = async (isFirstLoad = false) => {
       try {
-        setLoading(true);
+        if (isFirstLoad) setLoading(true);
         const result = await fetchLeaderboard();
         setTeams(result.leaderboard || []);
       } catch (error) {
@@ -31,9 +31,9 @@ export default function Leaderboard() {
       }
     };
 
-    loadLeaderboard();
+    loadLeaderboard(true);
     loadVisibility();
-    const timer = setInterval(loadLeaderboard, 1000);
+    const timer = setInterval(() => loadLeaderboard(false), 1000);
     const visibilityTimer = setInterval(loadVisibility, 1000);
     return () => {
       clearInterval(timer);

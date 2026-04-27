@@ -129,43 +129,7 @@ export default function Dashboard() {
     };
   }, []);
 
-  useEffect(() => {
-    let mounted = true;
-
-    const loadLeaderboard = async () => {
-      try {
-        const response = await fetchLeaderboard();
-        if (!mounted) return;
-        setRemoteLeaderboard(Array.isArray(response.leaderboard) ? response.leaderboard : []);
-        setLeaderboardVisible(Boolean(response.visible));
-      } catch {
-        if (!mounted) return;
-        setRemoteLeaderboard([]);
-      }
-    };
-
-    const loadLeaderboardVisibility = async () => {
-      try {
-        const response = await fetchLeaderboardVisibility();
-        if (!mounted) return;
-        setLeaderboardVisible(Boolean(response.visible));
-      } catch {
-        if (!mounted) return;
-        setLeaderboardVisible(false);
-      }
-    };
-
-    loadLeaderboard();
-    loadLeaderboardVisibility();
-    const timer = setInterval(loadLeaderboard, 5000);
-    const visibilityTimer = setInterval(loadLeaderboardVisibility, 5000);
-
-    return () => {
-      mounted = false;
-      clearInterval(timer);
-      clearInterval(visibilityTimer);
-    };
-  }, []);
+  // Leaderboard data is handled by the Leaderboard component itself.
 
   useEffect(() => {
     const timer = setInterval(() => {
