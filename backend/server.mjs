@@ -1159,10 +1159,51 @@ app.post('/api/admin/team/unfreeze-all', authRequired, adminRequired, async (req
 
     await logAuctionEvent('admin_unfreeze_all', `Admin unfrozen all teams`, {});
 
-    return res.json({ success: true, message: 'All teams unfrozen', state: globalFreezeState });
+    return res.json({ success: true, message: 'All teams unfrozen' });
   } catch (error) {
-    console.error('[ADMIN UNFREEZE ALL]', error);
+    console.error('[UNFREEZE ALL]', error);
     return res.status(500).json({ error: 'Unable to unfreeze all teams' });
+  }
+});
+
+app.post('/api/admin/team/no-cooldown', authRequired, adminRequired, async (req, res) => {
+  try {
+    const { teamId, seconds } = req.body;
+    if (!teamId || !seconds) return res.status(400).json({ error: 'teamId and seconds required' });
+
+    await pool.execute(
+      "DELETE FROM active_effects WHERE team_id = ? AND effect_type = 'no_cooldown'",
+      [teamId]
+    );
+
+    await pool.execute(
+      "INSERT INTO active_effects (id, team_id, effect_type, expiry_time, created_at) VALUES (?, ?, 'no_cooldown', DATE_ADD(UTC_TIMESTAMP(), INTERVAL ? SECOND), UTC_TIMESTAMP())",
+      [uuid(), teamId, seconds]
+    );
+
+    await logAuctionEvent('admin_buff', `Admin granted NO_COOLDOWN to ${teamId} for ${seconds}s`, { team_id: teamId, seconds });
+    return res.json({ success: true, message: `No-cooldown granted for ${seconds}s` });
+  } catch (error) {
+    console.error('[NO COOLDOWN]', error);
+    return res.status(500).json({ error: 'Unable to grant no-cooldown' });
+  }
+});
+
+app.post('/api/admin/team/revoke-no-cooldown', authRequired, adminRequired, async (req, res) => {
+  try {
+    const { teamId } = req.body;
+    if (!teamId) return res.status(400).json({ error: 'teamId required' });
+
+    await pool.execute(
+      "DELETE FROM active_effects WHERE team_id = ? AND effect_type = 'no_cooldown'",
+      [teamId]
+    );
+
+    await logAuctionEvent('admin_buff_revoke', `Admin revoked NO_COOLDOWN from ${teamId}`, { team_id: teamId });
+    return res.json({ success: true, message: 'No-cooldown revoked' });
+  } catch (error) {
+    console.error('[REVOKE NO COOLDOWN]', error);
+    return res.status(500).json({ error: 'Unable to revoke no-cooldown' });
   }
 });
 

@@ -172,6 +172,20 @@ export async function adminUnfreezeAll() {
   });
 }
 
+export async function adminGrantNoCooldown(teamId, seconds) {
+  return request('/api/admin/team/no-cooldown', {
+    method: 'POST',
+    body: JSON.stringify({ teamId, seconds }),
+  });
+}
+
+export async function adminRevokeNoCooldown(teamId) {
+  return request('/api/admin/team/revoke-no-cooldown', {
+    method: 'POST',
+    body: JSON.stringify({ teamId }),
+  });
+}
+
 export async function adminUpdateTeamCoins(teamId, coins) {
   return request('/api/admin/team/coins', {
     method: 'POST',

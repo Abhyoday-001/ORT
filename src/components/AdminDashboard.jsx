@@ -24,6 +24,8 @@ import {
   adminFreezeAllExcept,
   adminUnfreezeAll,
   adminUpdateTeamCoins,
+  adminGrantNoCooldown,
+  adminRevokeNoCooldown,
 } from '../lib/apiClient';
 import { AUCTION_CARDS } from '../config/auctionCards';
 
@@ -74,6 +76,8 @@ export default function AdminDashboard({ user, onLogout }) {
   const [excludeTeamId, setExcludeTeamId] = useState('');
   const [mgmtBusy, setMgmtBusy] = useState(false);
   const [freezeActionStatus, setFreezeActionStatus] = useState({ type: '', message: '' });
+  const [buffTeamId, setBuffTeamId] = useState('');
+  const [buffSeconds, setBuffSeconds] = useState(120);
 
   const nowClock = useMemo(
     () => new Date().toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour12: false }),
@@ -478,6 +482,35 @@ export default function AdminDashboard({ user, onLogout }) {
     }
   };
 
+  const handleGrantNoCooldown = async () => {
+    if (!buffTeamId || !buffSeconds) return;
+    try {
+      setMgmtBusy(true);
+      await adminGrantNoCooldown(buffTeamId, buffSeconds);
+      setActionMessage(`NO-COOLDOWN GRANTED TO ${buffTeamId} FOR ${buffSeconds}s`);
+      setFreezeActionStatus({ type: 'success', message: 'Bypass granted' });
+    } catch (err) {
+      setTeamsError(err.message);
+      setFreezeActionStatus({ type: 'error', message: 'Grant failed' });
+    } finally {
+      setMgmtBusy(false);
+    }
+  };
+
+  const handleRevokeNoCooldown = async (teamId) => {
+    try {
+      setMgmtBusy(true);
+      await adminRevokeNoCooldown(teamId);
+      setActionMessage('NO-COOLDOWN REVOKED');
+      setFreezeActionStatus({ type: 'success', message: 'Bypass revoked' });
+    } catch (err) {
+      setTeamsError(err.message);
+      setFreezeActionStatus({ type: 'error', message: 'Revoke failed' });
+    } finally {
+      setMgmtBusy(false);
+    }
+  };
+
   return (
     <div className="h-screen overflow-y-auto bg-slate-950 text-emerald-300 font-mono p-4 md:p-6">
       <div className="max-w-7xl mx-auto space-y-6">
@@ -822,6 +855,53 @@ export default function AdminDashboard({ user, onLogout }) {
                     🔥 UNFREEZE ALL
                   </button>
                 </div>
+              </div>
+            </div>
+          </div>
+
+          {/* TEAM BUFFS: NO-COOLDOWN */}
+          <div className="rounded-xl border border-emerald-500/20 bg-black/40 p-4 space-y-3">
+            <h2 className="text-sm text-emerald-400 tracking-[0.2em]">TEAM POWER-UPS</h2>
+            <div className="space-y-3">
+              <div className="space-y-1">
+                <label className="text-[10px] text-white/60 uppercase tracking-[0.1em]">SELECT TEAM:</label>
+                <select
+                  value={buffTeamId}
+                  onChange={(e) => setBuffTeamId(e.target.value)}
+                  className="w-full rounded bg-black/60 border border-emerald-500/40 px-3 py-2 text-xs text-white"
+                >
+                  <option value="">-- SELECT TEAM --</option>
+                  {adminTeams.filter(t => !t.is_admin).map(team => (
+                    <option key={team.id} value={team.id}>{team.team_id}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="space-y-1">
+                <label className="text-[10px] text-white/60 uppercase tracking-[0.1em]">BUFF DURATION (SECONDS):</label>
+                <input
+                  type="number"
+                  value={buffSeconds}
+                  onChange={(e) => setBuffSeconds(e.target.value)}
+                  className="w-full rounded bg-black/60 border border-white/10 px-3 py-2 text-xs text-white"
+                />
+              </div>
+              <div className="flex gap-2">
+                <button
+                  disabled={mgmtBusy || !buffTeamId}
+                  onClick={handleGrantNoCooldown}
+                  type="button"
+                  className="flex-1 rounded border border-emerald-500/40 bg-emerald-900/20 py-2 text-[10px] font-bold uppercase hover:bg-emerald-500/15 disabled:opacity-60"
+                >
+                  ⚡️ BYPASS COOLDOWN
+                </button>
+                <button
+                  disabled={mgmtBusy || !buffTeamId}
+                  onClick={() => handleRevokeNoCooldown(buffTeamId)}
+                  type="button"
+                  className="flex-1 rounded border border-red-500/40 bg-red-900/20 py-2 text-[10px] font-bold uppercase hover:bg-red-500/15 disabled:opacity-60"
+                >
+                  🛡 REVOKE
+                </button>
               </div>
             </div>
           </div>
