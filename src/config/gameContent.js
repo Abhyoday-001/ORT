@@ -69,10 +69,10 @@ Are you ready to begin?
         {
           title: 'Layer 1',
           question: `Rain delay report:
-The revised targets were calculated using three checkpoints:
+ The revised targets were calculated using three checkpoints:
 • After the powerplay cut in half
-• When a full side stood plus the twelfth man
-• Just before the final over could begin
+ • When a full side stood plus the twelfth man
+ • Just before the final over could begin
 Only these moments were retained for adjustment.`,
         },
         {
