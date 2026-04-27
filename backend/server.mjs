@@ -203,7 +203,11 @@ function uuid() {
   return crypto.randomUUID();
 }
 
-app.use(cors({ origin: true, credentials: true }));
+app.use(cors({
+  origin: '*',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 app.use(express.json({ limit: '1mb' }));
 
 function signSession(team) {
