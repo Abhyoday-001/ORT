@@ -43,5 +43,5 @@ export const CREDENTIALS = [
   { team_id: 'TEAM VALOR', password: 'TEAMVALOR@ort', is_admin: false },
   { team_id: 'CHANGEZ', password: 'CHANGEZ@ort', is_admin: false },
   { team_id: 'FOUR ON FIRE', password: 'FOURONFIRE@ort', is_admin: false },
-  { team_id: 'ADMIN01', password: 'Sup3r@Vault#Root', is_admin: true },
+  { team_id: 'ADMIN01', password: 'Missionort@2026', is_admin: true },
 ];
