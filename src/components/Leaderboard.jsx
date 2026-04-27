@@ -97,7 +97,7 @@ export default function Leaderboard() {
                 <div className="space-y-2">
                   {displayedTeams.map((team, idx) => (
                     <div
-                      key={team.id}
+                      key={team.id || team.team_id}
                       className={`flex items-center justify-between gap-3 rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2 text-xs ${
                         user?.id === team.id ? 'bg-emerald-500/10 border-emerald-500/20' : ''
                       }`}

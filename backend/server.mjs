@@ -1222,6 +1222,7 @@ app.get('/api/leaderboard', async (_req, res) => {
         (finalc ? 25 : 0);
 
       return ({
+      id: row.id,
       team_id: row.team_id,
       points: row.points,
       coins: row.coins,
