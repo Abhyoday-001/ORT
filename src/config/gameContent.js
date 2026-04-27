@@ -70,62 +70,123 @@ Are you ready to begin?
           title: 'Layer 1',
           question: `Rain delay report:
 The revised targets were calculated using three checkpoints:
-- After the powerplay cut in half
-- When a full side stood plus the twelfth man
-- Just before the final over could begin
+• After the powerplay cut in half
+• When a full side stood plus the twelfth man
+• Just before the final over could begin
 Only these moments were retained for adjustment.`,
         },
         {
           title: 'Layer 2',
           question: `MATCH LOG
-OVERS: 20 | 16
-STRIKE ROTATION: IX • VII • III
-BOUNDARIES: ■■■■`,
+
+OVERS:
+2 0 | 1 6
+
+STRIKE ROTATION:
+IX • VII • III
+
+BOUNDARIES:
+■■■■`,
         },
         {
           title: 'Layer 3',
-          question: `When Royal Challengers Bangalore first took shape in 2008, early analysts kept shifting interpretations in cycles.
-They later realized that positions, not movement, defined the formation.`,
+          question: `“When the Royal Challengers Bangalore first took shape in 2008, early analysts kept shifting their interpretations back and forth, convinced the pattern would reveal itself through cycles—but every attempt only returned them to the start; only later did a few realize that positions, not movement, defined the formation.”`,
         },
         {
           title: 'Layer 4',
-          question: `A pair fell early, a trio followed, a quartet tried to resist — but the rest folded in one final stretch.`,
+          question: `“A pair fell early, a trio followed, a quartet tried to resist—but the rest folded in one final stretch.”`,
         },
       ],
       B: [
         {
           title: 'Layer 1',
           question: `A lone fielder stays tight, then retreats, then holds again.
-The field spreads, tightens, spreads once more — then suddenly three gather close.
+
+The field spreads, tightens, spreads once more—then suddenly three gather close.
+
+One steps in, another drifts out, then returns before the next shifts back in.
+
+Two sweep the boundary, one joins them, then the last holds the line.
+
+And again, the same opening movement repeats.
+
 The captain isn’t changing strategy… he’s spelling something.
-What you seek won’t make sense until you turn it around.`,
+
+The game has slowed—almost as if stepping back changes everything.
+What you seek won’t make sense… until you turn it around.`,
         },
         {
           title: 'Layer 2',
-          question: `During drinks break, figures flash: 82, 79, 78, 76, 78, 82, 81.
-One commentator says things are “usually one step off before they make sense.”
-Most stop at the obvious answer; the field still repeats a simpler alternation.`,
+          question: `During the drinks break, the broadcast slows, and a strange set of figures—82, 79, 78, 76, 78, 82, 81—briefly flashes between shots of players rehydrating.
+One of the commentators jokes that things like this are “usually one step off before they start making sense,” almost as if inviting someone to adjust and interpret them.
+Those who follow the trail arrive at a word that fits perfectly with the league, something expected, something that feels like the answer after a long chase.
+Content with that discovery, they stop looking any further, letting the game resume without another thought.
+But the field tells a quieter story—tight lines, angled placements, turning gaps, advancing arcs—nothing new, nothing added, just the same simple alternation repeating in front of everyone.`,
         },
         {
           title: 'Layer 3',
-          question: `Phase: 11–15 Overs.
-Head Coach: “Every two deliveries matter more than one.”
-Snippet: 75 75 | 82 70 | 86 78 | 76 85
-Note: “Games flip when you know when to retreat.”`,
+          question: `Phase: 11–15 Overs
+
+Head Coach Note:
+“Singles won’t win this. Build partnerships. Every two deliveries matter more than one.”
+
+Commentary Snippet (overheard, incomplete):
+
+75 75 | 82 70 | 86 78 | 76 85
+
+Assistant Coach scribble:
+“Odd stands showed attacking intent.
+Even ones… pulled things back.”
+
+Old Analyst (muttering):
+“They always talk about going forward…
+but games flip when you know when to retreat.”
+
+Bottom Corner (chalk, almost erased):
+“Scoreboard never lies.”`,
         },
       ],
       C: [
         {
           title: 'Layer 1',
-          question: `The captain moves fielders with intent: slip, gully, point, cover, mid-off, mid-on, square, fine leg.
-Trace shifts and take only what position allows.
-If your answer feels certain, ask yourself — did anything actually move?`,
+          question: `The captain moves his men with quiet intent —
+not random, never rushed.
+
+From the keeper outward, count their places.
+Slip begins, gully follows,
+point holds firm while cover repeats.
+Mid-off and mid-on stand their ground,
+square and fine leg mirror the play.
+
+Trace each shift as it happens,
+and from every position, take what its place allows.
+Not all letters matter — only those in order.
+
+You may find something ordered in the fall,
+where greater always comes before the small.
+Characters may whisper in code,
+numbers aligning as if complete.
+
+Yet the field does not break,
+no gap is found, no run is taken.
+
+Short pauses. Long pauses. Signals in between.
+Not every message belongs to the game.
+
+So if your answer feels certain,
+ask yourself —
+did anything actually move?`,
         },
         {
           title: 'Layer 2',
-          question: `The league remembers crowns, but some rises start in silence.
-Not all paths are straight — some skip, some jump, some follow hidden order.
-Count only where patterns refuse to be even.`,
+          question: `The league remembers crowns, but not every rise begins there.
+ Some stories start in silence, buried beneath early failure.
+Not all paths are straight—some skip, some jump, some follow hidden order.
+ Those who chase every step will miss what matters most.
+Count only where patterns refuse to be even.
+ Measure not the game, but the structure beneath it.
+When letters emerge, they name a forgotten force.
+ And that force… it didn’t just play—it struck.`,
         },
       ]
     }
