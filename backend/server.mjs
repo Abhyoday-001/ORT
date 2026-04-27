@@ -2188,6 +2188,6 @@ app.post('/api/admin/leaderboard-visibility', authRequired, adminRequired, (req,
   }
 });
 
-server.listen(port, () => {
-  console.log(`[API] Operation Red Trophy backend listening on http://localhost:${port}`);
+server.listen(port, '0.0.0.0', () => {
+  console.log(`[API] Operation Red Trophy backend listening on http://0.0.0.0:${port}`);
 });
