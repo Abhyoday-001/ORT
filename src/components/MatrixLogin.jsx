@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { loginTeam } from '../lib/apiClient';
 
 export default function MatrixLogin({ onLogin }) {
-  const [teamName, setTeamName] = useState('RED_ALPHA');
+  const [teamName, setTeamName] = useState('');
   const [authKey, setAuthKey] = useState('');
   const [status] = useState('Awaiting Investigator Credentials');
   const [isLoading, setIsLoading] = useState(false);
@@ -91,6 +91,7 @@ export default function MatrixLogin({ onLogin }) {
               autoComplete="off"
             />
           </div>
+
 
           {/* Error Message */}
           {error && (

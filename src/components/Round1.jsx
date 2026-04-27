@@ -147,8 +147,18 @@ export default function Round1({ onComplete }) {
             <div className="absolute inset-0 pointer-events-none border-2 border-yellow-500/10" />
 
             {/* Click to Zoom Hint */}
-            <div className="absolute bottom-4 right-4 text-xs text-yellow-500/60 font-mono opacity-0 group-hover:opacity-100 transition-opacity">
-              [Click to expand]
+            <div className="absolute bottom-4 right-4 flex items-center gap-3">
+              <a
+                href={ROUND1_IMAGE}
+                download="Round1_Challenge.png"
+                onClick={(e) => e.stopPropagation()}
+                className="rounded-md bg-black/60 border border-white/10 px-2 py-1 text-[10px] text-white/60 hover:text-white hover:bg-white/10 transition-all flex items-center gap-1.5"
+              >
+                📥 DOWNLOAD ASSET
+              </a>
+              <div className="text-[10px] text-yellow-500/60 font-mono opacity-0 group-hover:opacity-100 transition-opacity">
+                [Click to expand]
+              </div>
             </div>
           </div>
 
@@ -308,12 +318,22 @@ export default function Round1({ onComplete }) {
               <p className="text-xs text-white/50 font-mono">
                 Examine the image carefully to find the hidden password...
               </p>
-              <button
-                onClick={() => setShowImageFullscreen(null)}
-                className="premium-button px-4 py-2 text-xs rounded-lg"
-              >
-                CLOSE [ESC]
-              </button>
+              <div className="flex items-center gap-3">
+                <a
+                  href={ROUND1_IMAGE}
+                  download="Round1_Challenge.png"
+                  onClick={(e) => e.stopPropagation()}
+                  className="premium-button px-4 py-2 text-xs rounded-lg flex items-center gap-2"
+                >
+                  📥 DOWNLOAD IMAGE
+                </a>
+                <button
+                  onClick={() => setShowImageFullscreen(null)}
+                  className="premium-button px-4 py-2 text-xs rounded-lg"
+                >
+                  CLOSE [ESC]
+                </button>
+              </div>
             </div>
           </div>
         </div>
