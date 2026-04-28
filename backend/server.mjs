@@ -1837,10 +1837,11 @@ app.post('/api/auction/bid', authRequired, async (req, res) => {
       amount,
     });
 
+    console.log(`[BID_SUCCESS] Team: ${team.team_id}, Bid: ${amount}`);
     return res.json({ success: true, amount });
   } catch (error) {
-    console.error('[AUCTION BID]', error);
-    return res.status(500).json({ error: 'Unable to place bid' });
+    console.error('[AUCTION_BID_CRITICAL_ERROR]', error.message, error.stack);
+    return res.status(500).json({ error: `Internal error: ${error.message}` });
   }
 });
 
