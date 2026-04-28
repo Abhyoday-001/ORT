@@ -1802,14 +1802,16 @@ app.post('/api/auction/bid', authRequired, async (req, res) => {
       return res.status(400).json({ error: `Bid must be at least ${runtime.drawn_card.min_value} coins` });
     }
 
-    // 2. Enforce 500 increment over current highest bid
-    const [maxBidRows] = await pool.execute('SELECT MAX(amount) as current_max FROM auction_bids');
-    const currentMax = Number(maxBidRows?.[0]?.current_max || 0);
-    
+    const BID_CAP = 25000;
+
+    if (amount > BID_CAP) {
+      return res.status(400).json({ error: `Bid cannot exceed the maximum cap of ${BID_CAP} coins` });
+    }
+
     // If there are existing bids, the new bid must be currentMax + 500
-    // If no bids yet, it just needs to be >= min_value
-    if (currentMax > 0 && amount < currentMax + 500) {
-      return res.status(400).json({ error: `Next bid must be at least ${currentMax + 500} (Min +500 increment)` });
+    // EXCEPT if the bid is exactly the 25000 cap (allowing multiple teams to tie at the top)
+    if (currentMax > 0 && amount < currentMax + 500 && amount !== BID_CAP) {
+      return res.status(400).json({ error: `Next bid must be at least ${currentMax + 500} (or tie at ${BID_CAP})` });
     }
 
     // 3. Check if team has enough coins (but don't deduct yet)

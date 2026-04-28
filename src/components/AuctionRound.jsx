@@ -176,16 +176,16 @@ export default function AuctionRound() {
             <div className="rounded-xl border border-white/10 bg-black/40 p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
               <p className="text-[9px] uppercase tracking-[0.28em] text-white/45">Bidding terminal</p>
               {runtime?.phase === 'bidding' && currentCard ? (
-                <form onSubmit={handleBid} className="mt-2 space-y-2">
                   <label className="text-[10px] uppercase tracking-[0.2em] text-yellow-200/70">
-                    Next Bid Must Be: <span className="text-white font-bold">{Math.max(currentCard?.min_value || 0, (topBid?.amount || 0) + (topBid ? 500 : 0))}</span>
+                    Next Bid Must Be: <span className="text-white font-bold">{Math.min(25000, Math.max(currentCard?.min_value || 0, (topBid?.amount || 0) + (topBid ? 500 : 0)))}</span> { (topBid?.amount >= 24500) && '(Max Cap: 25000)' }
                   </label>
                   <input
                     value={bidInput}
                     onChange={(event) => setBidInput(event.target.value)}
                     type="number"
+                    max="25000"
                     className="premium-input w-full rounded-lg px-3 py-2 text-sm"
-                    placeholder={`Min. ${(topBid?.amount || 0) + (topBid ? 500 : currentCard?.min_value || 0)}`}
+                    placeholder={topBid?.amount >= 25000 ? "Tie at 25000" : `Min. ${Math.min(25000, (topBid?.amount || 0) + (topBid ? 500 : currentCard?.min_value || 0))}`}
                   />
                   <button disabled={loading} type="submit" className="premium-button w-full rounded-lg py-2 text-[10px] uppercase tracking-[0.2em] disabled:opacity-60">
                     Place bid
