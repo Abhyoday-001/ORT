@@ -36,7 +36,6 @@ export const CREDENTIALS = [
   { team_id: 'GAMMA KODERS', password: 'GAMMAKODERS@ort', is_admin: false },
   { team_id: 'TMP', password: 'TMP@ort', is_admin: false },
   { team_id: 'RED ROXX', password: 'REDROXX@ort', is_admin: false },
-  { team_id: 'LONE SMASHER', password: 'LONESMASHER@ort', is_admin: false },
   { team_id: 'NOMADS', password: 'NOMADS@ort', is_admin: false },
   { team_id: 'SINISTER SIX', password: 'SINISTERSIX@ort', is_admin: false },
   { team_id: 'VELOCITY CREW', password: 'VELOCITYCREW@ort', is_admin: false },
