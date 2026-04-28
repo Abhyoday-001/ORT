@@ -74,8 +74,8 @@ export default function AuctionRound() {
 
   const handleBid = async (event) => {
     event.preventDefault();
-    const amount = Number(bidInput);
-    if (!Number.isFinite(amount) || amount <= 0 || loading) return;
+    const amount = Number(bidInput.toString().replace(/[^0-9.]/g, ''));
+    if (isNaN(amount) || amount <= 0 || loading) return;
 
     setLoading(true);
     setError('');

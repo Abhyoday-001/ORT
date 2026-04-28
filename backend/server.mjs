@@ -1798,20 +1798,22 @@ app.post('/api/auction/bid', authRequired, async (req, res) => {
     }
 
     // 1. Check if bid is at least the card's minimum value
+    // 1. Check if bid is at least the card's minimum value
     if (runtime.drawn_card && amount < Number(runtime.drawn_card.min_value || 0)) {
-      return res.status(400).json({ error: `Bid must be at least ${runtime.drawn_card.min_value} coins` });
+      return res.status(400).json({ error: `Bid must be at least ${runtime.drawn_card.min_value} coins.` });
     }
 
-    const BID_CAP = 25000;
+    console.log(`[BID ATTEMPT] Team: ${team.team_id}, Amount: ${amount}, CurrentMax: ${currentMax}`);
 
     if (amount > BID_CAP) {
-      return res.status(400).json({ error: `Bid cannot exceed the maximum cap of ${BID_CAP} coins` });
+      return res.status(400).json({ error: `Bid cannot exceed the maximum cap of ${BID_CAP} coins.` });
     }
 
     // If there are existing bids, the new bid must be currentMax + 500
     // EXCEPT if the bid is exactly the 25000 cap (allowing multiple teams to tie at the top)
     if (currentMax > 0 && amount < currentMax + 500 && amount !== BID_CAP) {
-      return res.status(400).json({ error: `Next bid must be at least ${currentMax + 500} (or tie at ${BID_CAP})` });
+      const needed = currentMax + 500;
+      return res.status(400).json({ error: `Insufficient bid. Next bid must be at least ${needed} or tie at ${BID_CAP}.` });
     }
 
     // 3. Check if team has enough coins (but don't deduct yet)
