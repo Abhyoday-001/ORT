@@ -1797,7 +1797,10 @@ app.post('/api/auction/bid', authRequired, async (req, res) => {
       return res.status(403).json({ error: 'You are frozen and cannot bid right now' });
     }
 
-    // 1. Check if bid is at least the card's minimum value
+    const [maxBidRows] = await pool.execute('SELECT MAX(amount) as current_max FROM auction_bids');
+    const currentMax = Number(maxBidRows?.[0]?.current_max || 0);
+    const BID_CAP = 25000;
+
     // 1. Check if bid is at least the card's minimum value
     if (runtime.drawn_card && amount < Number(runtime.drawn_card.min_value || 0)) {
       return res.status(400).json({ error: `Bid must be at least ${runtime.drawn_card.min_value} coins.` });
