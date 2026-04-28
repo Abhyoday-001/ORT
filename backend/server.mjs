@@ -1720,14 +1720,7 @@ app.get('/api/auction/state', authRequired, async (req, res) => {
 app.post('/api/admin/auction/start', authRequired, adminRequired, async (req, res) => {
   try {
     await ensureAuctionRuntime();
-    // Safety: refund any reserved coins from a previous auction before clearing bids.
-    const [existingBids] = await pool.execute('SELECT team_id, amount FROM auction_bids');
-    for (const bid of existingBids || []) {
-      const refund = Number(bid.amount || 0);
-      if (refund > 0) {
-        await updateTeamCoins(bid.team_id, refund);
-      }
-    }
+    // No more refunds needed as we don't deduct coins during bidding anymore.
     await pool.execute('DELETE FROM auction_bids');
 
     const runtime = await updateAuctionRuntime({
@@ -1804,58 +1797,33 @@ app.post('/api/auction/bid', authRequired, async (req, res) => {
       return res.status(403).json({ error: 'You are frozen and cannot bid right now' });
     }
 
+    // 1. Check if bid is at least the card's minimum value
     if (runtime.drawn_card && amount < Number(runtime.drawn_card.min_value || 0)) {
       return res.status(400).json({ error: `Bid must be at least ${runtime.drawn_card.min_value} coins` });
     }
 
-    // Reserve coins immediately on bid placement (and release on bid reduction).
-    // This enables real-time balance updates while allowing refunds for non-winners.
-    const conn = await pool.getConnection();
-    try {
-      await conn.beginTransaction();
-
-      // Lock current bid row (if any) to compute delta safely.
-      const [existingRows] = await conn.execute(
-        'SELECT amount FROM auction_bids WHERE team_id = ? LIMIT 1 FOR UPDATE',
-        [team.id]
-      );
-      const previous = Number(existingRows?.[0]?.amount || 0);
-      const delta = amount - previous;
-
-      // Lock team row to update coins safely.
-      const [teamRows] = await conn.execute(
-        'SELECT coins FROM teams WHERE id = ? LIMIT 1 FOR UPDATE',
-        [team.id]
-      );
-      const currentCoins = Number(teamRows?.[0]?.coins || 0);
-
-      if (delta > 0 && delta > currentCoins) {
-        await conn.rollback();
-        return res.status(400).json({ error: 'Bid exceeds your available coins' });
-      }
-
-      if (delta !== 0) {
-        await conn.execute(
-          'UPDATE teams SET coins = GREATEST(0, coins - ?) WHERE id = ?',
-          [delta, team.id]
-        );
-      }
-
-      // Upsert bid (insert or update)
-      await conn.execute(
-        `INSERT INTO auction_bids (id, team_id, amount, created_at)
-         VALUES (?, ?, ?, NOW())
-         ON DUPLICATE KEY UPDATE amount = VALUES(amount), created_at = NOW()`,
-        [uuid(), team.id, amount]
-      );
-
-      await conn.commit();
-    } catch (err) {
-      try { await conn.rollback(); } catch { /* ignore */ }
-      throw err;
-    } finally {
-      conn.release();
+    // 2. Enforce 500 increment over current highest bid
+    const [maxBidRows] = await pool.execute('SELECT MAX(amount) as current_max FROM auction_bids');
+    const currentMax = Number(maxBidRows?.[0]?.current_max || 0);
+    
+    // If there are existing bids, the new bid must be currentMax + 500
+    // If no bids yet, it just needs to be >= min_value
+    if (currentMax > 0 && amount < currentMax + 500) {
+      return res.status(400).json({ error: `Next bid must be at least ${currentMax + 500} (Min +500 increment)` });
     }
+
+    // 3. Check if team has enough coins (but don't deduct yet)
+    if (amount > Number(team.coins || 0)) {
+      return res.status(400).json({ error: `You only have ${team.coins} coins. Bid is too high.` });
+    }
+
+    // 4. Record/Update the bid
+    await pool.execute(
+      `INSERT INTO auction_bids (id, team_id, amount, created_at)
+       VALUES (?, ?, ?, NOW())
+       ON DUPLICATE KEY UPDATE amount = VALUES(amount), created_at = NOW()`,
+      [uuid(), team.id, amount]
+    );
 
     await logAuctionEvent('bid_placed', `${team.team_id} placed a bid`, {
       team_id: team.id,
@@ -1897,8 +1865,7 @@ app.post('/api/admin/auction/resolve', authRequired, adminRequired, async (req, 
       );
     }
 
-    // Winner's bid is already reserved/deducted at bid time.
-    // At resolution, refund all non-winning bidders back to their pre-bid balance.
+    // Winner's bid is now deducted only at resolution time.
     const [winnerBidRows] = await pool.execute(
       'SELECT amount FROM auction_bids WHERE team_id = ? LIMIT 1',
       [winner.id]
@@ -1908,17 +1875,13 @@ app.post('/api/admin/auction/resolve', authRequired, adminRequired, async (req, 
       return res.status(400).json({ error: 'Selected team has no valid bid to resolve' });
     }
 
-    const [otherBids] = await pool.execute(
-      'SELECT team_id, amount FROM auction_bids WHERE team_id != ?',
-      [winner.id]
+    // Deduct coins from winner
+    await pool.execute(
+      'UPDATE teams SET coins = GREATEST(0, coins - ?) WHERE id = ?',
+      [bidAmount, winner.id]
     );
-    for (const bid of otherBids || []) {
-      const refund = Number(bid.amount || 0);
-      if (refund > 0) {
-        await updateTeamCoins(bid.team_id, refund);
-      }
-    }
-    // Keep only the winner bid row for reference during targeting/resolved states.
+
+    // Clear all other bids (no refunds needed anymore)
     await pool.execute('DELETE FROM auction_bids WHERE team_id != ?', [winner.id]);
 
     // Apply card effect if it's a self-targeting card

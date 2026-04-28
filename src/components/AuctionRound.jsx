@@ -177,15 +177,15 @@ export default function AuctionRound() {
               <p className="text-[9px] uppercase tracking-[0.28em] text-white/45">Bidding terminal</p>
               {runtime?.phase === 'bidding' && currentCard ? (
                 <form onSubmit={handleBid} className="mt-2 space-y-2">
-                  <label className="text-[10px] uppercase tracking-[0.2em] text-yellow-200/70">Enter bid (Min: {currentCard?.min_value || 1})</label>
+                  <label className="text-[10px] uppercase tracking-[0.2em] text-yellow-200/70">
+                    Next Bid Must Be: <span className="text-white font-bold">{Math.max(currentCard?.min_value || 0, (topBid?.amount || 0) + (topBid ? 500 : 0))}</span>
+                  </label>
                   <input
                     value={bidInput}
                     onChange={(event) => setBidInput(event.target.value)}
                     type="number"
-                    min={currentCard?.min_value || 1}
-                    max={me?.coins > 0 ? me.coins : undefined}
                     className="premium-input w-full rounded-lg px-3 py-2 text-sm"
-                    placeholder={`e.g. ${currentCard?.min_value || 1000}`}
+                    placeholder={`Min. ${(topBid?.amount || 0) + (topBid ? 500 : currentCard?.min_value || 0)}`}
                   />
                   <button disabled={loading} type="submit" className="premium-button w-full rounded-lg py-2 text-[10px] uppercase tracking-[0.2em] disabled:opacity-60">
                     Place bid
